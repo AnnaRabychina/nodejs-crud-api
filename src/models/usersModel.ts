@@ -16,3 +16,10 @@ export const create = async (user: IBasicUser): Promise<IUser> => {
     resolve(newUser);
   });
 };
+
+export const findById = async (id: string): Promise<IUser> => {
+  return new Promise((resolve, reject) => {
+    const user = data.find((item) => item.id === id);
+    resolve(user);
+  });
+};

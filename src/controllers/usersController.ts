@@ -1,7 +1,7 @@
 import { IUser, IBasicUser } from "interfaces/usersInterface.js";
 import * as Users from "../models/usersModel.js";
 import { IncomingMessage, ServerResponse } from "http";
-import { getReqData } from "../utils/utils.js";
+import { getReqData, isUUID } from "../utils/utils.js";
 
 export const getAllUsers = async (
   req: IncomingMessage,
@@ -31,6 +31,29 @@ export const createUser = async (
     } else {
       res.writeHead(400, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: "Does not contain required fields" }));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getUser = async (
+  req: IncomingMessage,
+  res: ServerResponse,
+  id: string
+): Promise<void> => {
+  try {
+    const user: IUser = await Users.findById(id);
+
+    if (!isUUID(id)) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: "Invalid ID" }));
+    } else if (!user) {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "User not found" }));
+    } else {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(user));
     }
   } catch (error) {
     console.log(error);

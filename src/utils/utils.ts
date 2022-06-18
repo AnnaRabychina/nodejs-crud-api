@@ -20,3 +20,7 @@ export const getReqData = (req: IncomingMessage): Promise<IBasicUser> => {
   });
 };
 
+export const isUUID = (id: string): boolean => {
+  return id.match("^[0-9a-f]{8}-[0-9a-f]{4}-[4][0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$") === null ? false : true;
+}
+
