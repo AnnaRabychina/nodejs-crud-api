@@ -1,4 +1,4 @@
-import { getAllUsers } from "./controllers/usersController.js";
+import { getAllUsers, createUser  } from "./controllers/usersController.js";
 import * as http from "http";
 
 const server = http.createServer(
@@ -8,6 +8,9 @@ const server = http.createServer(
   ): Promise<void> => {
     if (request.url === "/api/users" && request.method === "GET") {
       getAllUsers(request, response);
+    } else if(request.url  === "/api/users" && request.method === "POST") {
+      createUser(request, response)
+
     } else {
       response.writeHead(404, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify({ message: 'Route not found' }));
