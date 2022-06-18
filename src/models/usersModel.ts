@@ -23,3 +23,12 @@ export const findById = async (id: string): Promise<IUser> => {
     resolve(user);
   });
 };
+
+export const update = async (id: string, user: IBasicUser): Promise<IUser> => {
+  return new Promise((resolve, reject) => {
+    const index = data.findIndex((item) => item.id === id);
+    data[index] = {id, ...user}
+    resolve(data[index]);
+  });
+};
+
