@@ -1,4 +1,4 @@
-import { getAllUsers, createUser, getUser, updateUser } from "./controllers/usersController.js";
+import { getAllUsers, createUser, getUser, updateUser, deleteUser } from "./controllers/usersController.js";
 import * as http from "http";
 
 const server = http.createServer(
@@ -10,12 +10,15 @@ const server = http.createServer(
       getAllUsers(request, response);
     } else if (request.url === "/api/users" && request.method === "POST") {
       createUser(request, response);
-    } else if (request.url.match(/\/api\/users\/([0-9]+)/) && request.method === "GET") {
+    } else if (request.url.match(/\/api\/users\/\w+/) && request.method === "GET") {
       const id = request.url.split('/')[3];
       getUser(request, response, id);
-    } else if (request.url.match(/\/api\/users\/([0-9]+)/) && request.method === "PUT") {
+    } else if (request.url.match(/\/api\/users\/\w+/) && request.method === "PUT") {
       const id = request.url.split('/')[3];
       updateUser(request, response, id);
+    } else if (request.url.match(/\/api\/users\/\w+/) && request.method === "DELETE") {
+      const id = request.url.split('/')[3];
+      deleteUser(request, response, id);
     } else {
       response.writeHead(404, { "Content-Type": "application/json" });
       response.end(JSON.stringify({ message: "Route not found" }));

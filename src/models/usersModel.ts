@@ -32,3 +32,11 @@ export const update = async (id: string, user: IBasicUser): Promise<IUser> => {
   });
 };
 
+export const remove = async (id: string) : Promise<void>=> {
+  return new Promise((resolve, reject) => {
+    const index = data.findIndex((item) => item.id === id);
+    data.splice(index, 1);
+    resolve();
+  });
+};
+
