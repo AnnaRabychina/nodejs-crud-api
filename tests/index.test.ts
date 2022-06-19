@@ -1,6 +1,7 @@
 import request from "supertest";
 import { server } from "../src/index";
 import { IUser } from "../src/interfaces/usersInterface";
+import { v4 as uuidv4 } from "uuid";
 
 describe("Scenario 1", () => {
   let usersArray: IUser[] = [];
@@ -117,5 +118,67 @@ describe("Scenario 2", () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveLength(0);
   });
-
 });
+
+describe("Scenario 3", () => {
+  let usersArray: IUser[] = [];
+
+  it("Create new record", async () => {
+    const response = await request(server)
+      .post("/api/users")
+      .send({
+        username: "test-user",
+        age: 25,
+        hobbies: ["reading", "swimming"],
+      });
+    expect(response.statusCode).toBe(201);
+    expect(response.body).toHaveProperty("id");
+    expect(response.body.username).toEqual("test-user");
+    expect(response.body.age).toEqual(25);
+    expect(response.body.hobbies).toEqual(["reading", "swimming"]);
+    usersArray.push(response.body);
+  });
+
+  it("Get nonexistent user by id", async () => {
+    const response = await request(server).get(`/api/users/${uuidv4()}`);
+    expect(response.statusCode).toBe(404);
+  });
+
+  it("Update nonexistent user", async () => {
+    const response = await request(server)
+      .put(`/api/users/${uuidv4()}`)
+      .send({
+        username: "upd-test-user",
+        age: 30,
+        hobbies: ["fishing", "football"],
+      });
+    expect(response.statusCode).toBe(404);
+  });
+
+  it("Delete nonexistent user", async () => {
+    const response = await request(server).delete(`/api/users/${uuidv4()}`);
+    expect(response.statusCode).toBe(404);
+  });
+
+  it("Get user by invalid id", async () => {
+    const response = await request(server).get("/api/users/1");
+    expect(response.statusCode).toBe(400);
+  });
+
+  it("Update user by invalid id", async () => {
+    const response = await request(server)
+      .put("/api/users/1")
+      .send({
+        username: "upd-test-user",
+        age: 30,
+        hobbies: ["fishing", "football"],
+      });
+    expect(response.statusCode).toBe(400);
+  });
+
+  it("Delete user by invalid id", async () => {
+    const response = await request(server).delete("/api/users/1");
+    expect(response.statusCode).toBe(400);
+  });
+});
+
