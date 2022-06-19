@@ -1,5 +1,6 @@
 import { getAllUsers, createUser, getUser, updateUser, deleteUser } from "./controllers/usersController.js";
 import * as http from "http";
+import 'dotenv/config';
 
 export const server = http.createServer(
   async (
