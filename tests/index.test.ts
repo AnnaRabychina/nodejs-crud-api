@@ -67,3 +67,55 @@ describe("Scenario 1", () => {
     expect(response.statusCode).toBe(404);
   });
 });
+
+describe("Scenario 2", () => {
+  let usersArray: IUser[] = [];
+
+  it("Check the number of records", async () => {
+    const response = await request(server).get("/api/users");
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveLength(0);
+  });
+
+  it("Create new record", async () => {
+    const response = await request(server)
+      .post("/api/users")
+      .send({
+        username: "first-user",
+        age: 25,
+        hobbies: ["reading", "swimming"],
+      });
+    expect(response.statusCode).toBe(201);
+    expect(response.body).toHaveProperty("id");
+    expect(response.body.username).toEqual("first-user");
+    expect(response.body.age).toEqual(25);
+    expect(response.body.hobbies).toEqual(["reading", "swimming"]);
+    usersArray.push(response.body);
+  });
+
+  it("Check the number of records again", async () => {
+    const response = await request(server).get("/api/users");
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveLength(1);
+  });
+
+  it("Get all records", async () => {
+    const response = await request(server).get("/api/users");
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toEqual(usersArray);
+  });
+
+  it("Delete the created record by id", async () => {
+    const response = await request(server).delete(
+      `/api/users/${usersArray[0].id}`
+    );
+    expect(response.statusCode).toBe(204);
+  });
+
+  it("Check the number of records again", async () => {
+    const response = await request(server).get("/api/users");
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveLength(0);
+  });
+
+});
