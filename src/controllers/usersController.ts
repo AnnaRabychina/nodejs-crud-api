@@ -1,7 +1,7 @@
 import { IUser, IBasicUser } from "interfaces/usersInterface.js";
 import * as Users from "../models/usersModel.js";
 import { IncomingMessage, ServerResponse } from "http";
-import { getReqData, isUUID } from "../utils/utils.js";
+import { getReqData, isUUID, handlerError } from "../utils/utils.js";
 
 export const getAllUsers = async (
   req: IncomingMessage,
@@ -12,7 +12,7 @@ export const getAllUsers = async (
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify(users));
   } catch (error) {
-    console.log(error);
+    handlerError(res, error);
   }
 };
 
@@ -33,7 +33,7 @@ export const createUser = async (
       res.end(JSON.stringify({ error: "Does not contain required fields" }));
     }
   } catch (error) {
-    console.log(error);
+    handlerError(res, error);
   }
 };
 
@@ -56,7 +56,7 @@ export const getUser = async (
       res.end(JSON.stringify(user));
     }
   } catch (error) {
-    console.log(error);
+    handlerError(res, error);
   }
 };
 
@@ -90,7 +90,7 @@ export const updateUser = async (
       res.end(JSON.stringify(updateUser));
     }
   } catch (error) {
-    console.log(error);
+    handlerError(res, error);
   }
 };
 
@@ -111,9 +111,9 @@ export const deleteUser = async (
     } else {
       await Users.remove(id);
       res.writeHead(204, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ message:"User deleted" }));
+      res.end(JSON.stringify({ message: "User deleted" }));
     }
   } catch (error) {
-    console.log(error);
+    handlerError(res, error);
   }
 };
