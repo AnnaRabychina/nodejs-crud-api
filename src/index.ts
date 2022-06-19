@@ -1,7 +1,7 @@
 import { getAllUsers, createUser, getUser, updateUser, deleteUser } from "./controllers/usersController.js";
 import * as http from "http";
 
-const server = http.createServer(
+export const server = http.createServer(
   async (
     request: http.IncomingMessage,
     response: http.ServerResponse
@@ -20,13 +20,14 @@ const server = http.createServer(
       const id = request.url.split('/')[3];
       deleteUser(request, response, id);
     } else {
+
       response.writeHead(404, { "Content-Type": "application/json" });
       response.end(JSON.stringify({ message: "Route not found" }));
     }
   }
 );
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

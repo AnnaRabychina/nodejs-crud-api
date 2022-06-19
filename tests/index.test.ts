@@ -1,0 +1,69 @@
+import request from "supertest";
+import { server } from "../src/index";
+import { IUser } from "../src/interfaces/usersInterface";
+
+describe("Scenario 1", () => {
+  let usersArray: IUser[] = [];
+
+  it("Get all records", async () => {
+    const response = await request(server).get("/api/users");
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toEqual([]);
+  });
+
+  it("Create new record", async () => {
+    const response = await request(server)
+      .post("/api/users")
+      .send({
+        username: "test-user",
+        age: 25,
+        hobbies: ["reading", "swimming"],
+      });
+    expect(response.statusCode).toBe(201);
+    expect(response.body).toHaveProperty("id");
+    expect(response.body.username).toEqual("test-user");
+    expect(response.body.age).toEqual(25);
+    expect(response.body.hobbies).toEqual(["reading", "swimming"]);
+    usersArray.push(response.body);
+  });
+
+  it("Get the created record by id", async () => {
+    const response = await request(server).get(
+      `/api/users/${usersArray[0].id}`
+    );
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveProperty("id");
+    expect(response.body.username).toEqual(usersArray[0].username);
+    expect(response.body.age).toEqual(usersArray[0].age);
+    expect(response.body.hobbies).toEqual(usersArray[0].hobbies);
+  });
+
+  it("Update the created record", async () => {
+    const response = await request(server)
+      .put(`/api/users/${usersArray[0].id}`)
+      .send({
+        username: "upd-test-user",
+        age: 20,
+        hobbies: ["swimming"],
+      });
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toHaveProperty("id");
+    expect(response.body.username).toEqual("upd-test-user");
+    expect(response.body.age).toEqual(20);
+    expect(response.body.hobbies).toEqual(["swimming"]);
+  });
+
+  it("Delete the created record by id", async () => {
+    const response = await request(server).delete(
+      `/api/users/${usersArray[0].id}`
+    );
+    expect(response.statusCode).toBe(204);
+  });
+
+  it("Get a deleted record by id", async () => {
+    const response = await request(server).get(
+      `/api/users/${usersArray[0].id}`
+    );
+    expect(response.statusCode).toBe(404);
+  });
+});
